@@ -41,8 +41,19 @@ Partial Class Service
     ' Do not modify it using the code editor.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
-        components = New System.ComponentModel.Container()
-        Me.ServiceName = "Service1"
+        Me.EventLog = New System.Diagnostics.EventLog()
+        CType(Me.EventLog, System.ComponentModel.ISupportInitialize).BeginInit()
+        '
+        'EventLog
+        '
+        Me.EventLog.Source = "StudioSentry"
+        '
+        'Service
+        '
+        Me.ServiceName = "Studio Sentry"
+        CType(Me.EventLog, System.ComponentModel.ISupportInitialize).EndInit()
+
     End Sub
 
+    Friend WithEvents EventLog As EventLog
 End Class
