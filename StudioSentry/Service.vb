@@ -23,7 +23,7 @@ Public Class Service
 
 
     Private Sub ListenForClients()
-        serverSocket = New TcpListener(IPAddress.Any, 8888)
+        serverSocket = New TcpListener(IPAddress.Any, 8888) ' XXX Should be configurable
         serverSocket.Start()
 
         ev.WriteEntry("Listen for clients...")
@@ -59,19 +59,27 @@ Public Class Service
                 End If
 
                 'message has successfully been received
-
-                'Dim encoder As New ASCIIEncoding()
-                'Dim serverResponse As String = "Response to send"
-                'Dim sendBytes As [Byte]() = Encoding.ASCII.GetBytes(serverResponse)
-                'clientStream.Write(sendBytes, 0, sendBytes.Length)
-
-                'message has successfully been received
                 Dim encoder As New ASCIIEncoding()
 
                 ' Convert the Bytes received to a string and display it on the Server Screen
                 Dim msg As String = encoder.GetString(message, 0, bytesRead)
-                ev.WriteEntry("Read from client: " & msg)
 
+                Dim clientRequest As New SimplifiedHttpRequest(msg)
+                ev.WriteEntry("Req from client: " & clientRequest.toString())
+
+                'Send back:
+                'Http/1.1 200 OK
+                'Date: Sun, 08 Feb 2018 01:11:12 GMT
+                'Server: Apache/1.3.29 (Win32)
+                'Content-Length: 35
+                'Connection: close
+                'Content-Type: application/json
+                '
+                '{}
+
+                'Dim serverResponse As String = "Response to send"
+                'Dim sendBytes As [Byte]() = Encoding.ASCII.GetBytes(serverResponse)
+                'clientStream.Write(sendBytes, 0, sendBytes.Length)
             End While
         Catch ex As Exception
             ev.WriteEntry("Client Comm. thread exception: " & ex.ToString, EventLogEntryType.Warning)
