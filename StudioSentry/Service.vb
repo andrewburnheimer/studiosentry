@@ -2,6 +2,8 @@
 Imports System.Net.Sockets
 Imports System.Text
 Imports System.Threading
+Imports Newtonsoft.Json
+
 
 ' Threading example found at http://stackoverflow.com/questions/27926103/vb-net-tcplistner-windows-service#question
 Public Class Service
@@ -90,8 +92,7 @@ Public Class Service
     End Sub
 
 
-    Private Function BytesToString(
-    ByVal bytes() As Byte) As String
+    Private Function BytesToString(ByVal bytes() As Byte) As String
         Return Encoding.Default.GetString(bytes)
     End Function
 
@@ -106,4 +107,15 @@ Public Class Service
         Me.toKeepRunning = False
     End Sub
 
+    Private Function NumOfRemoteAppUsers() As Integer
+        Return ListOfRemoteAppUsers().Count
+    End Function
+
+    Private Function ListOfRemoteAppUsers() As String()
+        Return New String(0) {}
+    End Function
+
+    Private Sub KickRemoteAppUser()
+
+    End Sub
 End Class
