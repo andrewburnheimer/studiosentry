@@ -84,9 +84,7 @@
     <Compile Include="ProjectInstaller.vb">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Service.vb">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Service.vb" />
     <Compile Include="Service.Designer.vb">
       <DependentUpon>Service.vb</DependentUpon>
     </Compile>
@@ -102,6 +100,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="SimplifiedHttpRequest.vb" />
+    <Compile Include="SimplifiedHttpResponse.vb" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="My Project\Resources.resx">
