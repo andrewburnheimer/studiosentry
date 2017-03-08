@@ -62,21 +62,21 @@ Uninstall the service with:
 
 Debug the operation of the service by attaching the debugger to the running service.
 
-1. Transfer <code>msvsmon.exe</code> from <code>Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\Remote Debugger\(platform)</code>  to the computer where the service will be tested on.
+1. Transfer <code>msvsmon.exe</code> from <code>Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\Remote Debugger\\\<platform\></code>  to the computer where the service will be tested on.
 
 2. run <code>msvsmon.exe</code>
 
-1. Build StudioSentry in the Debug configuration.
+3. Build StudioSentry in the Debug configuration.
 
-2. Install your service per instructions above.
+4. Install your service per instructions above.
 
-3. Start the service per instructions above.
+5. Start the service per instructions above.
 
-4. Start Visual Studio with administrative credentials so you can attach to system processes.
+6. Start Visual Studio with administrative credentials so you can attach to system processes.
 
-5. On the menu bar, choose **Attach to Process** from the Debug or Tools menu.
+7. On the menu bar, choose **Attach to Process** from the Debug or Tools menu.
 
-6. In the Available Processes section, choose the process for your service, and then choose Attach. Choose the appropriate options, and then choose OK to close the dialog box.
+8. In the Available Processes section, choose the process for your service, and then choose Attach. Choose the appropriate options, and then choose OK to close the dialog box.
 
 You may also use the "Just-in-time" debugger with the service:
 
