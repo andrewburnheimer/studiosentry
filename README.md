@@ -28,13 +28,11 @@ Startup
 StudioSentry must be run from within the context of the Windows Services
 Control Manager.
 
-1. **Start Menu**, **Control Panel**, **Administrative Tools**,
-   **Services**
+1. **Start Menu**, **Control Panel**, **Administrative Tools**, **Services**
 
 2. Find **StudioSentry** in the list of services
 
-3. Click the **Start** button (green "play button" icon) along the
-   top-bar of the Services window
+3. Click the **Start** button (green "play button" icon) along the top-bar of the Services window
 
 
 Usage
@@ -52,12 +50,9 @@ make any changes, commit and push to GitHub, and submit a pull request.
 After making any code changes, install the service application locally
 using a command-line utility called <code>InstallUtil.exe</code>. 
 
-1. **Start Menu**, **Visual Studio 2015**, **Visual Studio Tools**,
-   Right-click **Developer Command Prompt for VS2015** and **Run as
-   administrator**
+1. **Start Menu**, **Visual Studio 2015**, **Visual Studio Tools**, Right-click **Developer Command Prompt for VS2015** and **Run as administrator**
 
-2. Access the directory where the compiled executable file of
-   StudioSentry is located.
+2. Access the directory where the compiled executable file of StudioSentry is located.
 
 3. <code>installutil.exe StudioSentry.exe</code>
 
@@ -65,11 +60,9 @@ Uninstall the service with:
 
 * <code>installutil.exe /u StudioSentry.exe</code>
 
-Debug the operation of the service by attaching the debugger to the
-running service.
+Debug the operation of the service by attaching the debugger to the running service.
 
-1. Transfer <code>msvsmon.exe</code> from <code>Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\Remote Debugger\</code>*<platform>*
-   to the computer where the service will be tested on.
+1. Transfer <code>msvsmon.exe</code> from <code>Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\Remote Debugger\(platform)</code>  to the computer where the service will be tested on.
 
 2. run <code>msvsmon.exe</code>
 
@@ -79,25 +72,19 @@ running service.
 
 3. Start the service per instructions above.
 
-4. Start Visual Studio with administrative credentials so you can attach
-   to system processes.
+4. Start Visual Studio with administrative credentials so you can attach to system processes.
 
-5. On the menu bar, choose **Attach to Process** from the Debug or Tools
-   menu.
+5. On the menu bar, choose **Attach to Process** from the Debug or Tools menu.
 
-6. In the Available Processes section, choose the process for your
-   service, and then choose Attach. Choose the appropriate options, and
-   then choose OK to close the dialog box.
+6. In the Available Processes section, choose the process for your service, and then choose Attach. Choose the appropriate options, and then choose OK to close the dialog box.
 
 You may also use the "Just-in-time" debugger with the service:
 
 1. After the service has been started, open **Task Manager**
 
-2. Find the name of the service in the **Processes** tab, right-click
-   it, select Debug
+2. Find the name of the service in the **Processes** tab, right-click it, select Debug
 
-3. Click **Attach debugger**, select the debugger you would like to use,
-   and click the **Yes** button.
+3. Click **Attach debugger**, select the debugger you would like to use, and click the **Yes** button.
 
 
 Contact
