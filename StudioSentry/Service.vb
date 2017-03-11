@@ -1,8 +1,11 @@
-﻿Imports System.Net
+﻿
+
+Imports System.Net
 Imports System.Net.Sockets
 Imports System.Text
 Imports System.Threading
 Imports Newtonsoft.Json
+Imports Cassia
 
 Public Class ServiceMetadata
     Public Shared version_num As String = "0.0.9"
@@ -89,7 +92,7 @@ Public Class Service
                         rr.NumOfRemoteDesktopUsers = NumOfRemoteDesktopUsers()
                         serverResponse = New SimplifiedHttpResponse(200, JsonConvert.SerializeObject(rr))
                     ElseIf clientRequest.resource = "/KickRemoteAppUser" And clientRequest.method = "PUT" Then
-                        KickRemoteAppUser()
+                        KickRemoteAppUser() '(Decided to kick first remoteapp user in the dict) Either send it an ID to kick, or just assume there will only be one RAppUser and kick based on the LocalServer
                         serverResponse = New SimplifiedHttpResponse(202)
                     Else
                         Dim ur As New UsageResponse(False)
@@ -136,26 +139,91 @@ Public Class Service
     End Sub
 
     Private Function NumOfRemoteAppUsers() As Integer
-        Return ListOfRemoteAppUsers().Count
-    End Function
-
-    Private Function ListOfRemoteAppUsers() As String()
-        Throw New NotImplementedException()
-        Return New String(0) {}
+        Return DictOfRemoteAppUsers().Count
     End Function
 
     Private Function NumOfRemoteDesktopUsers() As Integer
-        Return ListOfRemoteDesktopUsers().Count
+        Return DictOfRemoteDesktopUsers().Count
     End Function
 
-    Private Function ListOfRemoteDesktopUsers() As String()
-        Throw New NotImplementedException()
-        Return New String(0) {}
-    End Function
-
-    Private Sub KickRemoteAppUser()
-        Throw New NotImplementedException()
+    Private Sub KickRemoteAppUser() 'Kick first remoteappuser in the dict
+        Try
+            Dim dictOfRAppUsers = DictOfRemoteAppUsers()
+            Dim kickID As Integer = dictOfRAppUsers.Keys.First
+            Dim session As ITerminalServicesSession
+            Dim manager As New TerminalServicesManager()
+            Using server As ITerminalServer = manager.GetLocalServer()
+                server.Open()
+                session = server.GetSession(kickID)
+                If Not session.ConnectionState.Equals(ConnectionState.Disconnected) Then
+                    session.Disconnect()
+                End If
+            End Using
+        Catch ex As Exception
+        End Try
     End Sub
+
+    Private Function DictOfRemoteAppUsers() As Dictionary(Of Integer, String)
+        Dim dictOfRAppUsers = GetAllUsers("RemoteApp")
+        Return dictOfRAppUsers
+    End Function
+
+    Private Function DictOfRemoteDesktopUsers() As Dictionary(Of Integer, String)
+        Dim dictOfRDUsers = GetAllUsers("RDP")
+        Return dictOfRDUsers
+    End Function
+
+    Private Function GetAllUsers(Optional ByVal mode As String = Nothing) As Dictionary(Of Integer, String)
+        Dim dictOfUsers As New Dictionary(Of Integer, String)
+        Dim dictOfRAppUsers As New Dictionary(Of Integer, String)
+        Dim dictofRDUsers As New Dictionary(Of Integer, String)
+        Dim manager As New TerminalServicesManager()
+
+        Using server As ITerminalServer = manager.GetLocalServer()
+            server.Open()
+            Dim sessionList As IList(Of ITerminalServicesSession) = server.GetSessions()
+            For Each sesh As ITerminalServicesSession In sessionList
+                If Not (String.IsNullOrEmpty(sesh.UserName) Or sesh.Equals(ConnectionState.Disconnected)) Then
+                    dictOfUsers.Add(sesh.SessionId, sesh.UserName)
+                End If
+            Next
+            Dim session As ITerminalServicesSession
+            Dim processList As List(Of ITerminalServicesProcess)
+            If mode Is "RemoteApp" Then
+                For Each pair As KeyValuePair(Of Integer, String) In dictOfUsers
+                    session = server.GetSession(pair.Key)
+                    processList = session.GetProcesses()
+                    For Each process As ITerminalServicesProcess In processList
+                        If process.ProcessName.Contains("rdpinit.exe") Or process.ProcessName.Contains("rdpshell.exe") Then
+                            If Not dictOfRAppUsers.Contains(pair) Then
+                                dictOfRAppUsers.Add(pair.Key, pair.Value)
+                            End If
+                        End If
+                    Next
+                Next
+                Return dictOfRAppUsers
+            ElseIf mode Is "RDP" Then
+                For Each pair As KeyValuePair(Of Integer, String) In dictOfUsers
+                    session = server.GetSession(pair.Key)
+                    processList = session.GetProcesses()
+                    For Each process As ITerminalServicesProcess In processList
+                        If process.ProcessName.Contains("rdpclip.exe") And Not (process.ProcessName.Contains("rdpinit.exe") Or (process.ProcessName.Contains("rdpshell.exe"))) Then
+                            If Not dictofRDUsers.Contains(pair) Then
+                                dictofRDUsers.Add(pair.Key, pair.Value)
+                            End If
+                        End If
+                    Next
+                Next
+                Return dictofRDUsers
+            ElseIf mode Is Nothing Then
+                Return dictOfUsers
+            Else
+                Return dictOfUsers
+            End If
+        End Using
+    End Function
+
+
 End Class
 
 Public Class UsageResponse
