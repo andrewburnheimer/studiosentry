@@ -8,10 +8,10 @@ Imports System.Runtime.InteropServices
 
 ' Review the values of the assembly attributes
 
-<Assembly: AssemblyTitle("StudioSentry")>
+<Assembly: AssemblyTitle("Studio Sentry")>
 <Assembly: AssemblyDescription("")>
-<Assembly: AssemblyCompany("")>
-<Assembly: AssemblyProduct("StudioSentry")>
+<Assembly: AssemblyCompany("Comcast NBCUniversal, Inc.")>
+<Assembly: AssemblyProduct("Studio Sentry")>
 <Assembly: AssemblyCopyright("Copyright ©  2017")>
 <Assembly: AssemblyTrademark("")>
 

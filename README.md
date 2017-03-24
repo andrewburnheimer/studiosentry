@@ -38,7 +38,8 @@ Control Manager.
 Usage
 -----
 
-See web interface served on the API socket, typically 8080.
+See the JSON formatted usage statement served on the API socket, with a
+URL like http://host.name:8888/usage
 
 
 Contribute

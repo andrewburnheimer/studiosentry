@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
+  <Product Id="*" Name="StudioSentry" Language="1033" Version="1.0.0.0" Manufacturer="Comcast NBCUniversal, Inc." UpgradeCode="284fff5d-f5b8-4121-a3ef-0b8581e67dfd">
+    <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="SystemFolder">
+        <Directory Id="INSTALLDIR" Name="StudioSentry">
+          <Component Id="STUDIOSENTRY" Guid="3bffd33f-d9ae-4063-8d66-37a32c8da62d">
+            <File Id="StudioSentry.exe" Name="$(var.StudioSentry.TargetFileName)" Source="$(var.StudioSentry.TargetPath)" DiskId="1" KeyPath="yes" />
+            <ServiceInstall Id="StudioSentry" Type="ownProcess" Name="StudioSentry" DisplayName="Studio Sentry" Description="Detects when RemoteApp users are connected, and disconnects them, on command" Start="auto" Account="LocalSystem" ErrorControl="normal">
+              <util:PermissionEx User="Everyone" ServicePauseContinue="yes" ServiceQueryStatus="yes" ServiceStart="yes" ServiceStop="yes" ServiceUserDefinedControl="yes" />
+            </ServiceInstall>
+            <ServiceControl Id="StudioSentry" Start="install" Stop="both" Remove="both" Name="StudioSentry" Wait="no" />
+          </Component>
+          <Component Id="CASSIALIB" Guid="0a79b5a6-f585-45a1-bd41-d2596caf0d71">
+            <File Source="$(var.StudioSentry.TargetDir)\Cassia.dll" DiskId="1" KeyPath="yes" />
+          </Component>
+          <Component Id="NEWTONSOFTJSONLIB" Guid="16e3b5b7-6316-4b15-9121-7eebced08321">
+            <File Source="$(var.StudioSentry.TargetDir)\Newtonsoft.Json.dll" DiskId="1" KeyPath="yes" />
+          </Component>
+        </Directory>
+      </Directory>
+    </Directory>
+    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+    <MediaTemplate EmbedCab="yes"/>
+    <Feature Id="Complete" Level="1">
+      <ComponentRef Id="STUDIOSENTRY" />
+      <ComponentRef Id="CASSIALIB" />
+      <ComponentRef Id="NEWTONSOFTJSONLIB" />
+    </Feature>
+  </Product>
+</Wix>
