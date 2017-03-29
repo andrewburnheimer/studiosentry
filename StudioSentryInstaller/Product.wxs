@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
-  <Product Id="*" Name="StudioSentry" Language="1033" Version="1.0.0.0" Manufacturer="Comcast NBCUniversal, Inc." UpgradeCode="284fff5d-f5b8-4121-a3ef-0b8581e67dfd">
+  <Product Id="*" Name="StudioSentry" Language="1033" Version="1.1.0.0" Manufacturer="Comcast NBCUniversal, Inc." UpgradeCode="284fff5d-f5b8-4121-a3ef-0b8581e67dfd">
     <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
     <Directory Id="TARGETDIR" Name="SourceDir">
       <Directory Id="SystemFolder">

@@ -8,7 +8,7 @@ Imports Newtonsoft.Json
 Imports Cassia
 
 Public Class ServiceMetadata
-    Public Shared version_num As String = "0.0.9"
+    Public Shared version_num As String = "1.1.0.0"
 End Class
 
 ' Threading example found at http://stackoverflow.com/questions/27926103/vb-net-tcplistner-windows-service#question
@@ -31,7 +31,7 @@ Public Class Service
 
 
     Private Sub ListenForClients()
-        serverSocket = New TcpListener(IPAddress.Any, 8888) ' XXX Should be configurable
+        serverSocket = New TcpListener(IPAddress.Any, 8000) ' XXX Should be configurable, also consider whitelist on source IP
         serverSocket.Start()
 
         ev.WriteEntry("Listen for clients...")
@@ -91,7 +91,7 @@ Public Class Service
                         Dim rr As New RemoteDesktopUsersResponse
                         rr.NumOfRemoteDesktopUsers = NumOfRemoteDesktopUsers()
                         serverResponse = New SimplifiedHttpResponse(200, JsonConvert.SerializeObject(rr))
-                    ElseIf clientRequest.resource = "/KickRemoteAppUser" And clientRequest.method = "PUT" Then
+                    ElseIf clientRequest.resource = "/KickRemoteAppUser" And clientRequest.method = "DELETE" Then
                         KickRemoteAppUser() '(Decided to kick first remoteapp user in the dict) Either send it an ID to kick, or just assume there will only be one RAppUser and kick based on the LocalServer
                         serverResponse = New SimplifiedHttpResponse(202)
                     Else
@@ -231,7 +231,7 @@ Public Class UsageResponse
     Public message As String = "OK"
 
     Public validEndpoints(,) As String = {{"GET", "/about"}, {"GET", "/usage"}, {"GET", "/NumOfRemoteAppUsers"},
-        {"GET", "/NumOfRemoteDesktopUsers"}, {"PUT", "/KickRemoteAppUser"}}
+        {"GET", "/NumOfRemoteDesktopUsers"}, {"DELETE", "/KickRemoteAppUser"}}
     Public Sub New(Optional intentionalCall As Boolean = True)
         If Not intentionalCall Then
             message = "Resource unknown, validEndpoints provided below"
