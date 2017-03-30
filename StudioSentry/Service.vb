@@ -8,7 +8,7 @@ Imports Newtonsoft.Json
 Imports Cassia
 
 Public Class ServiceMetadata
-    Public Shared version_num As String = "1.1.0.0"
+    Public Shared version_num As String = "1.1.1.0"
 End Class
 
 ' Threading example found at http://stackoverflow.com/questions/27926103/vb-net-tcplistner-windows-service#question
@@ -192,27 +192,31 @@ Public Class Service
             If mode Is "RemoteApp" Then
                 For Each pair As KeyValuePair(Of Integer, String) In dictOfUsers
                     session = server.GetSession(pair.Key)
-                    processList = session.GetProcesses()
-                    For Each process As ITerminalServicesProcess In processList
-                        If process.ProcessName.Contains("rdpinit.exe") Or process.ProcessName.Contains("rdpshell.exe") Then
-                            If Not dictOfRAppUsers.Contains(pair) Then
-                                dictOfRAppUsers.Add(pair.Key, pair.Value)
+                    If session.ConnectionState = ConnectionState.Active Or session.ConnectionState = ConnectionState.Connected Then
+                        processList = session.GetProcesses()
+                        For Each process As ITerminalServicesProcess In processList
+                            If process.ProcessName.Contains("rdpinit.exe") Then
+                                If Not dictOfRAppUsers.Contains(pair) Then
+                                    dictOfRAppUsers.Add(pair.Key, pair.Value)
+                                End If
                             End If
-                        End If
-                    Next
+                        Next
+                    End If
                 Next
                 Return dictOfRAppUsers
             ElseIf mode Is "RDP" Then
                 For Each pair As KeyValuePair(Of Integer, String) In dictOfUsers
                     session = server.GetSession(pair.Key)
-                    processList = session.GetProcesses()
-                    For Each process As ITerminalServicesProcess In processList
-                        If process.ProcessName.Contains("rdpclip.exe") And Not (process.ProcessName.Contains("rdpinit.exe") Or (process.ProcessName.Contains("rdpshell.exe"))) Then
-                            If Not dictofRDUsers.Contains(pair) Then
-                                dictofRDUsers.Add(pair.Key, pair.Value)
+                    If session.ConnectionState = ConnectionState.Active Or session.ConnectionState = ConnectionState.Connected Then
+                        processList = session.GetProcesses()
+                        For Each process As ITerminalServicesProcess In processList
+                            If process.ProcessName.Contains("explorer.exe") Then
+                                If Not dictofRDUsers.Contains(pair) Then
+                                    dictofRDUsers.Add(pair.Key, pair.Value)
+                                End If
                             End If
-                        End If
-                    Next
+                        Next
+                    End If
                 Next
                 Return dictofRDUsers
             ElseIf mode Is Nothing Then
