@@ -8,7 +8,7 @@ Imports Newtonsoft.Json
 Imports Cassia
 
 Public Class ServiceMetadata
-    Public Shared version_num As String = "1.1.1.0"
+    Public Shared version_num As String = "1.1.2.0"
 End Class
 
 ' Threading example found at http://stackoverflow.com/questions/27926103/vb-net-tcplistner-windows-service#question
@@ -156,7 +156,7 @@ Public Class Service
                 server.Open()
                 session = server.GetSession(kickID)
                 If Not session.ConnectionState.Equals(ConnectionState.Disconnected) Then
-                    session.Disconnect()
+                    session.Logoff()
                 End If
             End Using
         Catch ex As Exception
