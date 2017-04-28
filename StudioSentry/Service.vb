@@ -6,9 +6,10 @@ Imports System.Text
 Imports System.Threading
 Imports Newtonsoft.Json
 Imports Cassia
+Imports System.ServiceProcess
 
 Public Class ServiceMetadata
-    Public Shared version_num As String = "1.1.2.0"
+    Public Shared version_num As String = "1.1.3.0"
 End Class
 
 ' Threading example found at http://stackoverflow.com/questions/27926103/vb-net-tcplistner-windows-service#question
@@ -93,7 +94,10 @@ Public Class Service
                         serverResponse = New SimplifiedHttpResponse(200, JsonConvert.SerializeObject(rr))
                     ElseIf clientRequest.resource = "/KickRemoteAppUser" And clientRequest.method = "DELETE" Then
                         KickRemoteAppUser() '(Decided to kick first remoteapp user in the dict) Either send it an ID to kick, or just assume there will only be one RAppUser and kick based on the LocalServer
-                        serverResponse = New SimplifiedHttpResponse(202)
+                        serverResponse = New SimplifiedHttpResponse(200)
+                    ElseIf clientRequest.resource = "/ResetThinfinityServices" And clientRequest.method = "DELETE" Then
+                        ResetThinfinityServices()
+                        serverResponse = New SimplifiedHttpResponse(200)
                     Else
                         Dim ur As New UsageResponse(False)
                         serverResponse = New SimplifiedHttpResponse(404, JsonConvert.SerializeObject(ur))
@@ -122,6 +126,35 @@ Public Class Service
 
     End Sub
 
+    Private Sub ResetThinfinityServices()
+        Try
+            For Each processName As String In {"Thinfinity Remote Desktop Broker", "Thinfinity Remote Desktop Gateway"}
+                Dim scService As New ServiceController(processName)
+                Dim interval As New TimeSpan(10 * 10000000) ' 10 seconds in 100-nanosecond ticks
+
+                If scService.Status.Equals(ServiceControllerStatus.Stopped) Or scService.Status.Equals(ServiceControllerStatus.StopPending) Then
+                    ' Start the service if the current status is stopped.
+                    ev.WriteEntry(processName & " not running, starting")
+                    scService.Start()
+                    scService.WaitForStatus(ServiceControllerStatus.Running)
+                    ev.WriteEntry("Started " & processName)
+                Else
+                    ' Restart the service if its status is not set to "Stopped".
+                    ev.WriteEntry(processName & " found running, stopping")
+                    scService.Stop()
+                    scService.WaitForStatus(ServiceControllerStatus.Stopped)
+                    ev.WriteEntry(processName & " stopped")
+                    scService.Start()
+                    scService.WaitForStatus(ServiceControllerStatus.Running)
+                    ev.WriteEntry("Started " & processName)
+                End If
+
+            Next
+        Catch ex As Exception
+            ev.WriteEntry("Exception resetting services: " & ex.ToString, EventLogEntryType.Warning)
+            Throw
+        End Try
+    End Sub
 
     Private Function BytesToString(ByVal bytes() As Byte) As String
         Return Encoding.Default.GetString(bytes)
@@ -235,7 +268,7 @@ Public Class UsageResponse
     Public message As String = "OK"
 
     Public validEndpoints(,) As String = {{"GET", "/about"}, {"GET", "/usage"}, {"GET", "/NumOfRemoteAppUsers"},
-        {"GET", "/NumOfRemoteDesktopUsers"}, {"DELETE", "/KickRemoteAppUser"}}
+        {"GET", "/NumOfRemoteDesktopUsers"}, {"DELETE", "/KickRemoteAppUser"}, {"DELETE", "/ResetThinfinityServices"}}
     Public Sub New(Optional intentionalCall As Boolean = True)
         If Not intentionalCall Then
             message = "Resource unknown, validEndpoints provided below"
